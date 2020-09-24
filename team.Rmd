@@ -41,6 +41,8 @@ str(dat)
  1. Find the average years of education for the respondents with each political      party affiliation. Arrange your output in a meaningful order. Describe any       pattern you find.
   
   **Observation**` 
+  As the political party affiliation moves more to the right the average education level slightly increases.
+  
 ```{r}
 dat = dat %>% drop_na()
 dat <- dat %>%
@@ -70,9 +72,11 @@ str(PolPartyEdu)
   
 
   3. How is the happiness of a respondent related to his/her marriage status?
-  
-  
-  
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
+```
+
   4. Does party affiliation affect the relationship you found in the last             question?
   
   
@@ -83,7 +87,7 @@ str(PolPartyEdu)
   
   6. Explore two more interesting questions, and answer those questions using the      GSS data.
   
-*How many vocabulary words did the respondent get correct based on their education level?*
+*How many vocabulary words did the respondent get correct based on their education level?*  For the most part as the education level increases so does their vocabulary.
 ```{r}
 dat <- dat %>%
   mutate(Vocab = as.numeric(Vocab))
