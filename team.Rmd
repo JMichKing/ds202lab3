@@ -1,0 +1,93 @@
+---
+title: "Lab 3 - Team 5"
+author: "Lisa McDaniel"
+date: "9/23/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+**Lisa McDaniel - Exploratory Analysis Summery**
+
+
+
+
+**John King - Exploratory Analysis Summary**
+
+
+
+
+```{r}
+library(readxl)
+library(tidyverse)
+dat <- readxl::read_xls('../ds202lab3/GSS.xls', sheet="Data")
+names(dat)
+str(dat)
+dat
+```
+
+```{r echo=FALSE}
+dat <- dat %>%
+  rename(Sign = "Respondents astrological sign" ) %>%
+  rename(Vocab = "Number words correct in vocabulary test") %>%
+  rename(Origin = "Country of family origin") %>%
+  rename(MarHap = "Married people happier than unmarried") %>%
+  rename(Happy = "General happiness") %>%
+  rename(PolParty = "Political party affiliation") %>%
+  rename(Gender = "Respondents sex") %>%
+  rename(School = "Highest year of school completed") %>%
+  rename(Occ80 = "Rs occupational prestige score  (1980)") %>%
+  rename(Occ70 = "Rs occupational prestige score  (1970)") %>%
+  rename(IDnum = "Respondent id number") %>%
+  rename(Ballot = "Ballot used for interview") %>%
+  rename(Year = "Gss year for this respondent") %>%
+  rename(Married = "Marital status")
+
+names(dat)
+str(dat)
+```
+ 1. Find the average years of education for the respondents with each political      party affiliation. Arrange your output in a meaningful order. Describe any       pattern you find.
+  
+  **Observation**` 
+```{r}
+dat = dat %>% drop_na()
+dat <- dat %>%
+  mutate(School = as.numeric(School))
+
+dat %>%
+  group_by(PolParty) %>%
+  summarize(AvgEdu = mean(School, na.rm = TRUE), MedEdu = median(School, na.rm = TRUE)) %>%
+  arrange(AvgEdu)
+
+```
+
+
+  2. Create a single data frame containing records for the better educated            respondents in each political party affiliation. A “better educated”             respondent is someone who has more years of education than the median within      the same party affiliation. Print the structure of the data frame.
+ 
+```{r}
+PolPartyEdu <- dat %>%
+  select(PolParty, School)
+
+PolPartyEdu <- PolPartyEdu %>%
+  group_by(PolParty) %>%
+  filter(School >= median(School, na.rm = TRUE))
+
+str(PolPartyEdu)
+
+```  
+  
+
+  3. How is the happiness of a respondent related to his/her marriage status?
+  
+  
+  
+  4. Does party affiliation affect the relationship you found in the last             question?
+  
+  
+  
+  5. How is marrital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
+  
+  
+  
+  6. Explore two more interesting questions, and answer those questions using the      GSS data.
