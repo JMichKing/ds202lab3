@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r}
 library(readxl)
 library(tidyverse)
-dat <- readxl::read_xls('../ds202_lab3/GSS.xls', sheet="Data")
+dat <- readxl::read_xls('../ds202lab3/GSS.xls', sheet="Data")
 names(dat)
 str(dat)
 dat
@@ -37,11 +37,13 @@ dat <- dat %>%
 names(dat)
 str(dat)
 ```
+
 ```{r fig.width=12, fig.height=10}
 dat = dat %>% drop_na()
 
 ggplot(data=dat, aes(Year, fill=Gender)) + geom_bar(position='dodge') + ggtitle("Respondents") + theme(plot.title = element_text(hjust = 0.5), axis.title.y=element_blank()) + xlab("Year") + labs(fill="Gender")
 ```
+
 ```{r fig.width=12, fig.height=10}
 ggplot(data=dat, aes(PolParty, fill=PolParty)) + geom_bar() + theme(legend.position="right") + ggtitle("Happiness") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
 ```
@@ -117,7 +119,7 @@ ggplot(data=dat, aes(x=Married, fill=PolParty)) + geom_bar() + theme(legend.posi
 
 5.	How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
 ```{r fig.width=12, fig.height=10}
-ggplot(data=dat, aes(School, fill=School)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()) + facet_wrap((~Married))
+ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()) + facet_wrap((~School))
 ```
 
 6.	Explore two more interesting questions, and answer those questions using the GSS data.
@@ -130,4 +132,16 @@ dat <- dat %>%
 YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, "Don't know", "No answer")
 
 ggplot(aes(x=School, y=Vocab, group=School), data=dat) + geom_boxplot() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("Vocabulary") + xlab("Years of Education") + scale_x_discrete(limits = YearEd) + scale_x_continuous(limits = c(-1,21))
+```
+
+```{r}
+dat <- dat %>%
+  mutate(Vocab = as.numeric(Vocab))
+##str(dat)
+
+##ggplot(dat, aes(School, fill=School)) + geom_bar() + facet_wrap(~Sign)
+
+ggplot(data=dat, aes(Sign, fill=Sign)) + geom_bar() + theme(legend.position="right") + ggtitle("Astrological Sign") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~School))
+
+##ggplot(aes(School, fill=School), data=dat) + geom_bar() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("") + xlab("Years of Education") + facet_wrap(~Sign)
 ```
