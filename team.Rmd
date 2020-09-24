@@ -83,7 +83,11 @@ ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.positio
   
   5. How is marrital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
   
-  
+Interestingly, there really isn't a big swing in the range of martial status, even the median is similar across the groups (except for *No answer*).   
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(x=Married, y=School, fill=Married)) + geom_boxplot() + theme(legend.position="right") + ggtitle("Marital Status vs Education") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Marital Status") + ylab("Education Level")
+```
   
   6. Explore two more interesting questions, and answer those questions using the      GSS data.
   
