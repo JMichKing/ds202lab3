@@ -1,0 +1,133 @@
+---
+title: "individual1"
+author: "Lisa McDaniel"
+date: "9/22/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+dat <- readxl::read_xls('../ds202_lab3/GSS.xls', sheet="Data")
+names(dat)
+str(dat)
+dat
+```
+```{r}
+dat <- dat %>%
+  rename(Sign = "Respondents astrological sign" ) %>%
+  rename(Vocab = "Number words correct in vocabulary test") %>%
+  rename(Origin = "Country of family origin") %>%
+  rename(MarHap = "Married people happier than unmarried") %>%
+  rename(Happy = "General happiness") %>%
+  rename(PolParty = "Political party affiliation") %>%
+  rename(Gender = "Respondents sex") %>%
+  rename(School = "Highest year of school completed") %>%
+  rename(Occ80 = "Rs occupational prestige score  (1980)") %>%
+  rename(Occ70 = "Rs occupational prestige score  (1970)") %>%
+  rename(IDnum = "Respondent id number") %>%
+  rename(Ballot = "Ballot used for interview") %>%
+  rename(Year = "Gss year for this respondent") %>%
+  rename(Married = "Marital status")
+
+names(dat)
+str(dat)
+```
+```{r fig.width=12, fig.height=10}
+dat = dat %>% drop_na()
+
+ggplot(data=dat, aes(Year, fill=Gender)) + geom_bar(position='dodge') + ggtitle("Respondents") + theme(plot.title = element_text(hjust = 0.5), axis.title.y=element_blank()) + xlab("Year") + labs(fill="Gender")
+```
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(PolParty, fill=PolParty)) + geom_bar() + theme(legend.position="right") + ggtitle("Happiness") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Sign, fill=Sign)) + geom_bar() + theme(legend.position="right") + ggtitle("Astrological Sign") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Sign, fill=Sign)) + geom_bar() + theme(legend.position="right") + ggtitle("Astrological Sign") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~PolParty))
+```
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(School, fill=School)) + geom_bar() + theme(legend.position="right") + ggtitle("Country of Origin") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Origin))
+
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Happy, fill=Happy)) + geom_bar() + theme(legend.position="right") + ggtitle("Country of Origin") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Origin))
+
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(PolParty, fill=PolParty)) + geom_bar() + theme(legend.position="right") + ggtitle("Country of Origin") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Origin))
+
+```
+
+
+
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Happy, fill=Happy)) + geom_bar() + theme(legend.position="right") + ggtitle("Education") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~School))
+```
+1.	Find the average years of education for the respondents with each political party affiliation. Arrange your output in a meaningful order. Describe any pattern you find.
+```{r}
+dat <- dat %>%
+  mutate(School = as.numeric(School))
+str(dat)
+dat %>%
+  group_by(PolParty) %>%
+  summarize(AvgEdu = mean(School, na.rm = TRUE), MedEdu = median(School, na.rm = TRUE)) %>%
+  arrange(AvgEdu)
+
+```
+2.	Create a single data frame containing records for the better educated respondents in each political party affiliation. A “better educated” respondent is someone who has more years of education than the median within the same party affiliation. Print the structure of the data frame.
+```{r}
+PolPartyEdu <- dat %>%
+  select(PolParty, School)
+
+PolPartyEdu <- PolPartyEdu %>%
+  group_by(PolParty) %>%
+  filter(School >= median(School, na.rm = TRUE))
+
+str(PolPartyEdu)
+
+```
+
+3.	How is the happiness of a respondent related to his/her marriage status?
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
+```
+
+4.	Does party affiliation affect the relationship you found in the last question?
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(x=Married, fill=PolParty)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()) + facet_wrap((~Happy))
+```
+
+5.	How is marital status related to the education of a respondent? What are possible reasons accounting for the patterns you see?
+```{r fig.width=12, fig.height=10}
+ggplot(data=dat, aes(School, fill=School)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank()) + facet_wrap((~Married))
+```
+
+6.	Explore two more interesting questions, and answer those questions using the GSS data.
+
+```{r}
+dat <- dat %>%
+  mutate(Vocab = as.numeric(Vocab))
+##str(dat)
+
+YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, "Don't know", "No answer")
+
+ggplot(aes(x=School, y=Vocab, group=School), data=dat) + geom_boxplot() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("Vocabulary") + xlab("Years of Education") + scale_x_discrete(limits = YearEd) + scale_x_continuous(limits = c(-1,21))
+```
