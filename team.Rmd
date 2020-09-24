@@ -8,16 +8,6 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-**Lisa McDaniel - Exploratory Analysis Summery**
-We selected and downloaded 14 variables of interest from GSS Data Explorer site.  I renamed almost all the columns.  There are 64,814 observations in the dataset with the following columns: 1) Gss year for this respondent, 2) Respondents astrological sign, 3) Number words correct in vocabulary test, 4) Country of family origin, 5) Married people happier than unmarried, 6) General happiness, 7) Political party affiliation, 8) Respondents sex, 9) Highest year of school completed, 10) Marital status, 11) Rs occupational prestige score  (1980), 12) Rs occupational prestige score  (1970), 13) Respondent id number and 14) Ballot used for interview.  
-
-I did a bit of cleaning of the datset including dropping *NA* values, changing the *Number words correct in vocabulary test*, *Gss year for this respondent* and *Highest year of school completed* to numeric and renaming the columns as follows: 1) Year, 2) Sign, 3) Vocab, 4) Origin, 5) MarHap,6) Happy, 7) PolParty, 8) Gender, 9) School, 10) Married, 11) Occ80, 12)Occ70, 13) IDnum and 14) Ballot.   
-
-
-**John King - Exploratory Analysis Summary**
-
-
-
 
 ```{r}
 library(readxl)
