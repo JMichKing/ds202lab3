@@ -81,6 +81,23 @@ Married people have the highest proportion of "Very happy" people by a wide marg
 ## 4
 
 ```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
+dat2 <- dat %>% select(Happy, Married, PolParty) %>% drop_na %>%
+  filter(Married != "No answer" & Happy != "Not applicable" & Happy != "No answer" & Happy != "Don't know" & PolParty != "Don't know" & PolParty != "No answer") %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  arrange(Married)
+ggplot(dat2, aes(x = Married, fill = Happy)) + geom_bar(position = 'fill') +
+  labs(x = "Marital Status", y = "Proportion") + facet_wrap(~PolParty) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1))
+```
+
+Political party does not seem to have a major effect on the relationship. The same general shape of the graph can be seen in each of the party affiliations.
+
+## 5
+```{r, warning=FALSE}
 
 ```
 
+
+
+## Additional Question
