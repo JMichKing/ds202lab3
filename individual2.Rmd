@@ -117,3 +117,6 @@ ggplot(dat3, aes(x = Married, weight = meanYears)) +
 The "Never married" bar has the most average years in school. A likely reason for this may be that people spending many years in school may focus more on their education than dating, resulting in not getting married. The "Widowed" bar has the lowest average education time. This may have to do with people getting married earlier in life then not having time for higher education.
 
 ## (b) 
+```{r, warning=FALSE}
+dat2 <- 
+```

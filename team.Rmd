@@ -9,16 +9,16 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-```{r}
+```{r, include=FALSE}
 library(readxl)
 library(tidyverse)
-dat <- readxl::read_xls('../ds202lab3/GSS.xls', sheet="Data")
+dat <- readxl::read_xls('./GSS.xls', sheet="Data")
 names(dat)
 str(dat)
 dat
 ```
 
-```{r echo=FALSE}
+```{r echo=FALSE, include=FALSE}
 dat <- dat %>%
   rename(Sign = "Respondents astrological sign" ) %>%
   rename(Vocab = "Number words correct in vocabulary test") %>%
@@ -43,7 +43,7 @@ str(dat)
   **Observation**` 
   As the political party affiliation moves more to the right the average education level slightly increases.
   
-```{r}
+```{r, warning=FALSE}
 dat = dat %>% drop_na()
 dat <- dat %>%
   mutate(School = as.numeric(School))
@@ -52,6 +52,21 @@ dat %>%
   group_by(PolParty) %>%
   summarize(AvgEdu = mean(School, na.rm = TRUE), MedEdu = median(School, na.rm = TRUE)) %>%
   arrange(AvgEdu)
+order <- c("Strong democrat", "Not str democrat", "Ind,near dem", "Independent", "Other party", "Ind,near rep", "Not str republican", "Strong republican")
+
+dat2 <- dat %>% select(PolParty, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(PolParty) %>% 
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  filter(PolParty != "Don't know" & PolParty != "No answer") %>%
+  mutate(PolParty = factor(PolParty, levels = order)) %>%
+  arrange(PolParty)
+
+ggplot(dat2, aes(x = PolParty, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Political Party", y = "Mean years in school") +
+  coord_cartesian(ylim = c(11, 14))
 
 ```
 
@@ -79,9 +94,20 @@ ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.positio
 
   4. Does party affiliation affect the relationship you found in the last             question?
   
+```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
+dat2 <- dat %>% select(Happy, Married, PolParty) %>% drop_na %>%
+  filter(Married != "No answer" & Happy != "Not applicable" & Happy != "No answer" & Happy != "Don't know" & PolParty != "Don't know" & PolParty != "No answer") %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  arrange(Married)
+ggplot(dat2, aes(x = Married, fill = Happy)) + geom_bar(position = 'fill') +
+  labs(x = "Marital Status", y = "Proportion") + facet_wrap(~PolParty) + 
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1))
+```
+
+Political party does not seem to have a major effect on the relationship. The same general shape of the graph can be seen in each of the party affiliations.
   
-  
-  5. How is marrital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
+  5. How is marital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
   
 Interestingly, there really isn't a big swing in the range of martial status, even the median is similar across the groups (except for *No answer*).   
 
@@ -101,3 +127,5 @@ YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 
 ggplot(aes(x=School, y=Vocab, group=School), data=dat) + geom_boxplot() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("Vocabulary") + xlab("Years of Education") + scale_x_discrete(limits = YearEd) + scale_x_continuous(limits = c(-1,21))
 ```
+
+
