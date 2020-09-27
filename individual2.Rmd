@@ -1,0 +1,63 @@
+---
+title: "Lab 3 individual2"
+author: "John King"
+date: "9/24/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+dat <- readxl::read_xls('./GSS.xls', sheet = "Data")
+dat <- dat %>%
+  rename(Sign = "Respondents astrological sign" ) %>%
+  rename(Vocab = "Number words correct in vocabulary test") %>%
+  rename(Origin = "Country of family origin") %>%
+  rename(MarHap = "Married people happier than unmarried") %>%
+  rename(Happy = "General happiness") %>%
+  rename(PolParty = "Political party affiliation") %>%
+  rename(Gender = "Respondents sex") %>%
+  rename(School = "Highest year of school completed") %>%
+  rename(Occ80 = "Rs occupational prestige score  (1980)") %>%
+  rename(Occ70 = "Rs occupational prestige score  (1970)") %>%
+  rename(IDnum = "Respondent id number") %>%
+  rename(Ballot = "Ballot used for interview") %>%
+  rename(Year = "Gss year for this respondent") %>%
+  rename(Married = "Marital status")
+
+```
+
+## 1
+
+
+```{r}
+order <- c("Strong democrat", "Not str democrat", "Ind,near dem", "Independent", "Other party", "Ind,near rep", "Not str republican", "Strong republican")
+
+dat2 <- dat %>% select(PolParty, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(PolParty) %>% 
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  filter(PolParty != "Don't know" & PolParty != "No answer") %>%
+  mutate(PolParty = factor(PolParty, levels = order)) %>%
+  arrange(PolParty)
+
+ggplot(dat2, aes(x = PolParty, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Political Party", y = "Mean years in school") +
+  coord_cartesian(ylim = c(11, 14))
+```
+
+This is a bar plot that shows the average year in school with the political parties mentioned in the data. Note that the "Don't know" and "Other Answer" categories were omitted by nature of them not being political parties. The scale goes from 11 years to 14 years to manipulate the scale to better see the differences (as differences between the parties are too minimal to meaningfully see at such scales). The grouping of the political parties was done based on an approximation of the "political compass" wherein Strong Democrats are furthest to the left and Strong Republicans are furthest to the right. The only problem here is that the "Other Party" is unclear as to political leaning on the "compass" so it was placed in the middle to be as neutral as possible.
+
+The republican leaning parties tend to be more educated on average when compared to the democratic leaning party answers.
+
+## 2
+
+```{r}
+
+```
+
+
+
+## 
