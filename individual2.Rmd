@@ -1,5 +1,5 @@
 ---
-title: "Lab 3 individual2"
+title: "Lab 3 individual 2"
 author: "John King"
 date: "9/24/2020"
 output: html_document
@@ -30,7 +30,7 @@ dat <- dat %>%
 ## 1
 
 
-```{r}
+```{r, warning=FALSE}
 order <- c("Strong democrat", "Not str democrat", "Ind,near dem", "Independent", "Other party", "Ind,near rep", "Not str republican", "Strong republican")
 
 dat2 <- dat %>% select(PolParty, School) %>% drop_na %>%
@@ -54,10 +54,33 @@ The republican leaning parties tend to be more educated on average when compared
 
 ## 2
 
-```{r}
-
+```{r, warning=FALSE}
+dat2 <- dat %>% select(PolParty, School) %>% drop_na %>%
+  group_by(PolParty) %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  filter(School >= median(School, na.rm = TRUE))
+str(dat2)
 ```
 
 
 
-## 
+## 3
+
+```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
+dat2 <- dat %>% select(Happy, Married) %>% drop_na %>%
+  filter(Married != "No answer" & Happy != "Not applicable" & Happy != "No answer" & Happy != "Don't know") %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  arrange(Married)
+ggplot(dat2, aes(x = Married, fill = Happy)) + geom_bar(position = 'fill') +
+  labs(x = "Marital Status", y = "Proportion")
+```
+
+Married people have the highest proportion of "Very happy" people by a wide margin and the least "Not too happy" people by a similarly large margin. Meanwhile, the separated category has the most "Not too happy" people and least "Very happy" people, while the other three not married categories are roughly the same. This indicates that marriage positively correlates to general happiness. A final note is that the "Pretty Happy" is noticeably similar in proportion across all marital statuses.
+
+## 4
+
+```{r, warning=FALSE}
+
+```
+
