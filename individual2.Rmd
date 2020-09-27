@@ -95,9 +95,25 @@ Political party does not seem to have a major effect on the relationship. The sa
 
 ## 5
 ```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
+
+dat3 <- dat %>% select(Married, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(Married) %>% 
+  filter(Married != "Don't know" & Married != "Not applicable") %>%
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  drop_na %>%
+  arrange(Married)
+
+ggplot(dat3, aes(x = Married, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Marital Status", y = "Mean years in school") +
+  coord_cartesian()
 
 ```
 
+The "Never married" bar has the most average years in school. A likely reason for this may be that people spending many years in school may focus more on their education than dating, resulting in not getting married. The "Widowed" bar has the lowest average education time. This may have to do with people getting married earlier in life then not having time for higher education.
 
-
-## Additional Question
+## (b) 
