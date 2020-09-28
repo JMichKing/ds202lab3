@@ -133,4 +133,5 @@ ggplot(dat2, aes(x = Sign, weight = meanYears)) +
 
 ```
 
-It should be noted that astrological signs typically do not have much in the way of influence over much through a pure statistical perspective. However, in practice many people care about their astrological signs, so 
+Many people care about astrological sign and relative time of birth may have some correlation with academic pursuits.
+This bar chart shows that there can be some minor differences in the mean years in school. Interestingly, there is nearly a .2 difference in the mean between the Scorpio and Aquarius categories. Considering the large size of the data set, this could be worth further investigation to see if the time of birth could influence aspects of a person's life such as academic pursuit. 
