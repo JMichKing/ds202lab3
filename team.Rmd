@@ -1,6 +1,6 @@
 ---
-title: "Lab 3 - Team 5"
-author: "Lisa McDaniel"
+title: "Lab 3"
+author: "Team 5"
 date: "9/23/2020"
 output: html_document
 ---
@@ -38,7 +38,7 @@ dat <- dat %>%
 names(dat)
 str(dat)
 ```
- 1. Find the average years of education for the respondents with each political      party affiliation. Arrange your output in a meaningful order. Describe any       pattern you find.
+##   1. Find the average years of education for the respondents with each political      party affiliation. Arrange your output in a meaningful order. Describe any       pattern you find.
   
   **Observation**` 
   As the political party affiliation moves more to the right the average education level slightly increases.
@@ -70,8 +70,11 @@ ggplot(dat2, aes(x = PolParty, weight = meanYears)) +
 
 ```
 
+This is a bar plot that shows the average year in school with the political parties mentioned in the data. Note that the "Don't know" and "Other Answer" categories were omitted by nature of them not being political parties. The scale goes from 11 years to 14 years to manipulate the scale to better see the differences (as differences between the parties are too minimal to meaningfully see at such scales). The grouping of the political parties was done based on an approximation of the "political compass" wherein Strong Democrats are furthest to the left and Strong Republicans are furthest to the right. The only problem here is that the "Other Party" is unclear as to political leaning on the "compass" so it was placed in the middle to be as neutral as possible.
 
-  2. Create a single data frame containing records for the better educated            respondents in each political party affiliation. A “better educated”             respondent is someone who has more years of education than the median within      the same party affiliation. Print the structure of the data frame.
+The republican leaning parties tend to be more educated on average when compared to the democratic leaning party answers.
+
+##  2. Create a single data frame containing records for the better educated            respondents in each political party affiliation. A “better educated”             respondent is someone who has more years of education than the median within      the same party affiliation. Print the structure of the data frame.
  
 ```{r}
 PolPartyEdu <- dat %>%
@@ -86,13 +89,21 @@ str(PolPartyEdu)
 ```  
   
 
-  3. How is the happiness of a respondent related to his/her marriage status?
+##  3. How is the happiness of a respondent related to his/her marriage status?
 
-```{r fig.width=12, fig.height=10}
-ggplot(data=dat, aes(Married, fill=Married)) + geom_bar() + theme(legend.position="right") + ggtitle("Married") + theme(plot.title = element_text(hjust = 0.5), axis.title.y = element_blank(), axis.title.x = element_blank(),axis.text.x=element_blank(), axis.ticks.x=element_blank() ) + facet_wrap((~Happy))
+```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
+dat2 <- dat %>% select(Happy, Married) %>% drop_na %>%
+  filter(Married != "No answer" & Happy != "Not applicable" & Happy != "No answer" & Happy != "Don't know") %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  arrange(Married)
+ggplot(dat2, aes(x = Married, fill = Happy)) + geom_bar(position = 'fill') +
+  labs(x = "Marital Status", y = "Proportion")
 ```
 
-  4. Does party affiliation affect the relationship you found in the last             question?
+Married people have the highest proportion of "Very happy" people by a wide margin and the least "Not too happy" people by a similarly large margin. Meanwhile, the separated category has the most "Not too happy" people and least "Very happy" people, while the other three not married categories are roughly the same. This indicates that marriage positively correlates to general happiness. A final note is that the "Pretty Happy" is noticeably similar in proportion across all marital statuses.
+
+##  4. Does party affiliation affect the relationship you found in the last             question?
   
 ```{r, warning=FALSE}
 order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
@@ -107,15 +118,31 @@ ggplot(dat2, aes(x = Married, fill = Happy)) + geom_bar(position = 'fill') +
 
 Political party does not seem to have a major effect on the relationship. The same general shape of the graph can be seen in each of the party affiliations.
   
-  5. How is marital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
+##  5. How is marital status related to the education of a respondent? What are        possible reasons accounting for the patterns you see?
   
-Interestingly, there really isn't a big swing in the range of martial status, even the median is similar across the groups (except for *No answer*).   
+```{r, warning=FALSE}
+order <- c("Never married", "Married", "Widowed", "Separated", "Divorced")
 
-```{r fig.width=12, fig.height=10}
-ggplot(data=dat, aes(x=Married, y=School, fill=Married)) + geom_boxplot() + theme(legend.position="right") + ggtitle("Marital Status vs Education") + theme(plot.title = element_text(hjust = 0.5)) + xlab("Marital Status") + ylab("Education Level")
+dat3 <- dat %>% select(Married, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(Married) %>% 
+  filter(Married != "Don't know" & Married != "Not applicable") %>%
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  mutate(Married = factor(Married, levels = order)) %>%
+  drop_na %>%
+  arrange(Married)
+
+ggplot(dat3, aes(x = Married, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Marital Status", y = "Mean years in school") +
+  coord_cartesian()
+
 ```
+
+The "Never married" bar has the most average years in school. A likely reason for this may be that people spending many years in school may focus more on their education than dating, resulting in not getting married. The "Widowed" bar has the lowest average education time. This may have to do with people getting married earlier in life then not having time for higher education.
   
-  6. Explore two more interesting questions, and answer those questions using the      GSS data.
+##  6. Explore two more interesting questions, and answer those questions using the      GSS data.
   
 *How many vocabulary words did the respondent get correct based on their education level?*  For the most part as the education level increases so does their vocabulary.
 ```{r}
@@ -146,4 +173,5 @@ ggplot(dat2, aes(x = Sign, weight = meanYears)) +
 
 ```
 
-
+Many people care about astrological sign and relative time of birth may have some correlation with academic pursuits.
+This bar chart shows that there can be some minor differences in the mean years in school. Interestingly, there is nearly a .2 difference in the mean between the Scorpio and Aquarius categories. Considering the large size of the data set, this could be worth further investigation to see if the time of birth could influence aspects of a person's life such as academic pursuit. 
