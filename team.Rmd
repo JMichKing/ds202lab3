@@ -144,15 +144,27 @@ The "Never married" bar has the most average years in school. A likely reason fo
   
 ##  6. Explore two more interesting questions, and answer those questions using the      GSS data.
   
-*How many vocabulary words did the respondent get correct based on their education level?*  For the most part as the education level increases so does their vocabulary.
-```{r}
-dat <- dat %>%
+*How many vocabulary words did the respondent get correct based on their education level?*  For the most part as the education level increases so does their vocabulary, this is logical.
+```{r, warning=FALSE}
+
+dat2 <- dat %>% select(Vocab, School) %>%
+  filter(Vocab != "Not applicable" & Vocab != "Did not try") %>%
   mutate(Vocab = as.numeric(Vocab))
-##str(dat)
 
-YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, "Don't know", "No answer")
 
-ggplot(aes(x=School, y=Vocab, group=School), data=dat) + geom_boxplot() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("Vocabulary") + xlab("Years of Education") + scale_x_discrete(limits = YearEd) + scale_x_continuous(limits = c(-1,21))
+YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+
+dat3 <- dat2 %>%
+  group_by(School) %>%
+  filter(School != "Don't know" & School != "No answer") %>%
+  summarize(meanVocab = mean(Vocab))
+
+
+ggplot(dat3, aes(x =School , weight = meanVocab)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Education", y = "Mean Vocabulary") + scale_x_discrete(limits = YearEd) 
+
 ```
 
 *How does Astrological Sign influence the number of years a person might be in school?*

@@ -1,0 +1,67 @@
+---
+title: "Individual3"
+author: "Lisa McDaniel"
+date: "9/27/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(readxl)
+library(tidyverse)
+dat <- readxl::read_xls('./GSS.xls', sheet="Data")
+names(dat)
+str(dat)
+dat
+```
+
+
+```{r}
+dat <- dat %>%
+  rename(Sign = "Respondents astrological sign" ) %>%
+  rename(Vocab = "Number words correct in vocabulary test") %>%
+  rename(Origin = "Country of family origin") %>%
+  rename(MarHap = "Married people happier than unmarried") %>%
+  rename(Happy = "General happiness") %>%
+  rename(PolParty = "Political party affiliation") %>%
+  rename(Gender = "Respondents sex") %>%
+  rename(School = "Highest year of school completed") %>%
+  rename(Occ80 = "Rs occupational prestige score  (1980)") %>%
+  rename(Occ70 = "Rs occupational prestige score  (1970)") %>%
+  rename(IDnum = "Respondent id number") %>%
+  rename(Ballot = "Ballot used for interview") %>%
+  rename(Year = "Gss year for this respondent") %>%
+  rename(Married = "Marital status")
+
+names(dat)
+str(dat)
+```
+
+```{r}
+
+
+dat2 <- dat %>% select(Vocab, School) %>%
+  filter(Vocab != "Not applicable" & Vocab != "Did not try") %>%
+  mutate(Vocab = as.numeric(Vocab))
+
+dat2  
+
+YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+
+dat3 <- dat2 %>%
+  group_by(School) %>%
+  filter(School != "Don't know" & School != "No answer") %>%
+  summarize(meanVocab = mean(Vocab))
+
+dat3
+
+##  filter(Vocab != "Don't know" & Sign != "No answer" & Sign != "Not applicable")
+
+ggplot(dat3, aes(x =School , weight = meanVocab)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Education", y = "Mean Vocabulary") + scale_x_discrete(limits = YearEd)
+```
