@@ -128,4 +128,22 @@ YearEd <- c(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19
 ggplot(aes(x=School, y=Vocab, group=School), data=dat) + geom_boxplot() + ggtitle("Education of Vocabulary") + theme(plot.title = element_text(hjust = 0.5), axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + ylab("Vocabulary") + xlab("Years of Education") + scale_x_discrete(limits = YearEd) + scale_x_continuous(limits = c(-1,21))
 ```
 
+*How does Astrological Sign influence the number of years a person might be in school?*
+
+```{r, warning=FALSE}
+
+dat2 <- dat %>% select(Sign, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(Sign) %>% 
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  filter(Sign != "Don't know" & Sign != "No answer" & Sign != "Not applicable")
+
+ggplot(dat2, aes(x = Sign, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Astrological Sign", y = "Mean years in school") +
+  coord_cartesian(ylim = c(12.75, 13.25))
+
+```
+
 

@@ -118,5 +118,19 @@ The "Never married" bar has the most average years in school. A likely reason fo
 
 ## (b) 
 ```{r, warning=FALSE}
-dat2 <- 
+
+dat2 <- dat %>% select(Sign, School) %>% drop_na %>%
+  mutate(School = as.numeric(School, na.rm = TRUE)) %>%
+  group_by(Sign) %>% 
+  summarize(meanYears = mean(School, na.rm = TRUE)) %>%
+  filter(Sign != "Don't know" & Sign != "No answer" & Sign != "Not applicable")
+
+ggplot(dat2, aes(x = Sign, weight = meanYears)) +
+  geom_bar() +
+  theme(axis.text.x = element_text(angle = 90, vjust = .5, hjust = 1)) +
+  labs(x = "Astrological Sign", y = "Mean years in school") +
+  coord_cartesian(ylim = c(12.75, 13.25))
+
 ```
+
+It should be noted that astrological signs typically do not have much in the way of influence over much through a pure statistical perspective. However, in practice many people care about their astrological signs, so 
